@@ -8,7 +8,7 @@ contract DocumentStore is Owned {
     mapping(bytes32=>bool) public documents;
     mapping(address=>bool) public isAdmin;
 
-    event LogDocumentAdded(bytes32 hash);
+    event LogDocumentValidated(bytes32 hash);
     event LogDocumentInvalidated(bytes32 hash);
     event LogAdminAdded(address adminAddress);
     event LogAdminRemoved(address adminAddress);
@@ -18,9 +18,9 @@ contract DocumentStore is Owned {
         _;
     }
 
-    function addDocument(bytes32 hash) public onlyAdmins returns(bool status) {
+    function validateDocument(bytes32 hash) public onlyAdmins returns(bool status) {
         documents[hash] = true;
-        emit LogDocumentAdded(hash);
+        emit LogDocumentValidated(hash);
         return true;
     }
 

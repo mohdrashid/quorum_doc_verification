@@ -1,20 +1,20 @@
 pragma solidity 0.5.11;
 
 contract Owned {
-    address public owner;
+    address payable public owner;
+    event LogOwnerShipChange(address oldOwner, address newOwner);
 
-    function Owned() {
+    constructor() public {
         owner = msg.sender;
     }
 
     modifier onlyOwner() {
-        if (msg.sender != owner) {
-            throw;
-        }
+        require (msg.sender != owner);
         _;
     }
 
-    function transferOwnership(address newOwner) public onlyOwner {
+    function transferOwnership(address payable newOwner) public onlyOwner {
+        emit LogOwnerShipChange(owner, newOwner);
         if (newOwner != address(0)) {
             owner = newOwner;
         }
