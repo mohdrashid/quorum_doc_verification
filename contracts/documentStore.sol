@@ -4,41 +4,44 @@ import "./Owned.sol";
 
 contract DocumentStore is Owned {
 
-    address public owner;
     mapping(bytes32=>bool) public documents;
     mapping(address=>bool) public isAdmin;
 
-    event LogDocumentValidated(bytes32 hash);
-    event LogDocumentInvalidated(bytes32 hash);
-    event LogAdminAdded(address adminAddress);
-    event LogAdminRemoved(address adminAddress);
+    event LogDocumentValidated(address admin, bytes32 hash);
+    event LogDocumentInvalidated(address admin, bytes32 hash);
+    event LogAdminAdded(address owner, address adminAddress);
+    event LogAdminRemoved(address owner, address adminAddress);
 
     modifier onlyAdmins() {
         require(isAdmin[msg.sender]==true);
         _;
     }
 
+    constructor() public {
+        isAdmin[msg.sender]=true;
+    }
+
     function validateDocument(bytes32 hash) public onlyAdmins returns(bool status) {
         documents[hash] = true;
-        emit LogDocumentValidated(hash);
+        emit LogDocumentValidated(msg.sender, hash);
         return true;
     }
 
     function invalidateDocument(bytes32 hash) public onlyAdmins returns(bool status) {
         documents[hash] = false;
-        emit LogDocumentInvalidated(hash);
+        emit LogDocumentInvalidated(msg.sender, hash);
         return true;
     }
 
     function addAdmin(address adminAddress) public onlyOwner returns(bool status) {
         isAdmin[adminAddress] = true;
-        emit LogAdminAdded(adminAddress);
+        emit LogAdminAdded(msg.sender, adminAddress);
         return true;
     }
 
     function removeAdmin(address adminAddress) public onlyOwner returns(bool status) {
         isAdmin[adminAddress] = false;
-        emit LogAdminRemoved(adminAddress);
+        emit LogAdminRemoved(msg.sender, adminAddress);
         return true;
     }
 }
