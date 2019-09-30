@@ -1,6 +1,6 @@
 pragma solidity 0.5.11;
 
-import "./owned.sol";
+import "./Owned.sol";
 
 contract DocumentStore is Owned {
 
